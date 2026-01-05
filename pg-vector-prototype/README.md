@@ -45,16 +45,43 @@ sudo make install
 
 ### 3. Apache AGEのインストール（オプション）
 
+**重要**: Apache AGEはPostgreSQLのバージョンごとに異なるブランチを提供しています。使用しているPostgreSQLバージョンに対応したブランチを使用してください。
+
 ```bash
+# PostgreSQLのバージョンを確認
+pg_config --version
+
 # 依存関係
 sudo apt install flex bison
 
-# Apache AGEをビルド
+# Apache AGEをビルド（PostgreSQL 14の場合）
 cd /tmp
-git clone https://github.com/apache/age.git
+git clone --branch release/PG14/1.5.0 https://github.com/apache/age.git
 cd age
-make PG_CONFIG=/usr/bin/pg_config install
+make PG_CONFIG=/usr/bin/pg_config
+sudo make PG_CONFIG=/usr/bin/pg_config install
 ```
+
+#### PostgreSQLバージョン別のAGEブランチ
+
+| PostgreSQL | AGEブランチ |
+|------------|-------------|
+| PG 17 | `release/PG17/1.5.0` |
+| PG 16 | `release/PG16/1.5.0` |
+| PG 15 | `release/PG15/1.5.0` |
+| PG 14 | `release/PG14/1.5.0` |
+| PG 13 | `release/PG13/1.5.0` |
+
+#### トラブルシューティング
+
+mainブランチを使用してビルドすると、以下のようなエラーが発生することがあります：
+
+```
+error: unknown type name 'StringInfo'; did you mean 'fmStringInfo'?
+error: unknown type name 'Integer'
+```
+
+これはPostgreSQLのバージョン間でAPI変更があったためです。必ず上記の対応ブランチを使用してください。
 
 ### 4. 拡張機能の有効化
 
